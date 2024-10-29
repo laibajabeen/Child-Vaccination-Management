@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Vaccination Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="mainpage.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-syringe"></i>
+                VacciTrack
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-child"></i>
+                        Children
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i>
+                        Schedule
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-bell"></i>
+                        Reminders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="page-title">Dashboard</h1>
+                <button class="add-btn" onclick="openModal()">
+                    <i class="fas fa-plus"></i>
+                    Add New Child
+                </button>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Children</h3>
+                    <div class="number">156</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Due This Week</h3>
+                    <div class="number">23</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Completed Today</h3>
+                    <div class="number">12</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Reminders</h3>
+                    <div class="number">45</div>
+                </div>
+            </div>
+
+            <!-- Children Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Child Name</th>
+                            <th>Age</th>
+                            <th>Parent Name</th>
+                            <th>Next Vaccination</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>2 years</td>
+                            <td>Jane Doe</td>
+                            <td>MMR - 28 Oct 2024</td>
+                            <td><span class="status upcoming">Upcoming</span></td>
+                            <td>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sarah Smith</td>
+                            <td>1 year</td>
+                            <td>Mike Smith</td>
+                            <td>DPT - 30 Oct 2024</td>
+                            <td><span class="status completed">Completed</span></td>
+                            <td>
+                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Child Modal -->
+    <div class="modal" id="childModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Add New Child</h2>
+            <form id="childForm">
+                <div class="form-group">
+                    <label for="childName">Child's Name</label>
+                    <input type="text" id="childName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="parentName">Parent's Name</label>
+                    <input type="text" id="parentName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="parentEmail">Parent's Email</label>
+                    <input type="email" id="parentEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="parentPhone">Parent's Phone</label>
+                    <input type="tel" id="parentPhone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        const modal = document.getElementById('childModal');
+
+        function openModal() {
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Form submission
+        document.getElementById('childForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Add your form submission logic here
+            closeModal();
+        });
+    </script>
+</body>
+</html>

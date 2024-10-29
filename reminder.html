@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VacciTrack - Reminders</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="reminder.css">
+</head>
+<body class="bg-gray-50">
+    <div class="p-6 max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Reminders</h1>
+            <div class="flex gap-3">
+                <button class="border px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-50">
+                    Send All
+                </button>
+                <button class="bg-emerald-500 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    + New Reminder
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter and Search Section -->
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="relative">
+                    <input type="text" placeholder="Search children..." 
+                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                </div>
+                <div class="relative">
+                    <select class="w-full px-4 py-2 border rounded-lg appearance-none bg-white">
+                        <option value="">Filter by Status</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="sent">Sent</option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <select class="w-full px-4 py-2 border rounded-lg appearance-none bg-white">
+                        <option value="">Filter by Vaccine</option>
+                        <option value="mmr">MMR</option>
+                        <option value="dpt">DPT</option>
+                        <option value="polio">Polio</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-4">
+                <div class="text-red-500 text-sm font-medium">Overdue</div>
+                <div class="text-2xl font-bold mt-1">12</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <div class="text-yellow-500 text-sm font-medium">Due This Week</div>
+                <div class="text-2xl font-bold mt-1">23</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4">
+                <div class="text-emerald-500 text-sm font-medium">Sent Today</div>
+                <div class="text-2xl font-bold mt-1">45</div>
+            </div>
+        </div>
+
+        <!-- Reminders List -->
+        <div class="bg-white rounded-lg shadow">
+            <!-- Reminders Header -->
+            <div class="p-4 border-b">
+                <h2 class="font-semibold">All Reminders</h2>
+            </div>
+
+            <!-- Reminders -->
+            <div class="divide-y">
+                <!-- Overdue Reminder -->
+                <div class="reminder-card overdue p-4 hover:bg-gray-50">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-medium">John Doe</h3>
+                            <p class="text-sm text-gray-500">MMR Vaccination Due</p>
+                            <div class="mt-1">
+                                <span class="status-badge bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                                    5 days overdue
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="text-sm text-emerald-500 hover:text-emerald-600">
+                                Send Now
+                            </button>
+                            <button class="text-sm text-gray-500 hover:text-gray-600">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Reminder -->
+                <div class="reminder-card upcoming p-4 hover:bg-gray-50">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-medium">Sarah Smith</h3>
+                            <p class="text-sm text-gray-500">DPT Vaccination Due</p>
+                            <div class="mt-1">
+                                <span class="status-badge bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
+                                    Due in 2 days
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="text-sm text-emerald-500 hover:text-emerald-600">
+                                Schedule
+                            </button>
+                            <button class="text-sm text-gray-500 hover:text-gray-600">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sent Reminder -->
+                <div class="reminder-card sent p-4 hover:bg-gray-50">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-medium">Mike Johnson</h3>
+                            <p class="text-sm text-gray-500">Polio Vaccination Due</p>
+                            <div class="mt-1">
+                                <span class="status-badge bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full">
+                                    Reminder sent
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button class="text-sm text-gray-500 hover:text-gray-600">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter functionality
+            const statusSelect = document.querySelector('select');
+            statusSelect.addEventListener('change', function() {
+                const selectedStatus = this.value;
+                const allReminders = document.querySelectorAll('.reminder-card');
+                
+                allReminders.forEach(reminder => {
+                    if (!selectedStatus || reminder.classList.contains(selectedStatus)) {
+                        reminder.style.display = 'block';
+                    } else {
+                        reminder.style.display = 'none';
+                    }
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.querySelector('input[type="text"]');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const allReminders = document.querySelectorAll('.reminder-card');
+
+                allReminders.forEach(reminder => {
+                    const name = reminder.querySelector('h3').textContent.toLowerCase();
+                    if (name.includes(searchTerm)) {
+                        reminder.style.display = 'block';
+                    } else {
+                        reminder.style.display = 'none';
+                    }
+                });
+            });
+
+            // Add click handlers for buttons
+            const actionButtons = document.querySelectorAll('button');
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Handle button clicks - could show modals, update status, etc.
+                    console.log('Button clicked:', this.textContent.trim());
+                });
+            });
+        });
+    </script>
+</body>
+</html>

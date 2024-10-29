@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VacciTrack - Schedule</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="schedule.css">
+</head>
+<body class="bg-gray-50">
+    <div class="p-6 max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Schedule</h1>
+            <button class="bg-emerald-500 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                + New Appointment
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Calendar Section -->
+            <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">October 2024</h2>
+                    <div class="flex gap-2">
+                        <button class="p-2 hover:bg-gray-100 rounded-lg">&lt;</button>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg">&gt;</button>
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="grid grid-cols-7 gap-2">
+                    <!-- Days of week -->
+                    <div class="text-center text-gray-500 font-medium py-2">Sun</div>
+                    <div class="text-center text-gray-500 font-medium py-2">Mon</div>
+                    <div class="text-center text-gray-500 font-medium py-2">Tue</div>
+                    <div class="text-center text-gray-500 font-medium py-2">Wed</div>
+                    <div class="text-center text-gray-500 font-medium py-2">Thu</div>
+                    <div class="text-center text-gray-500 font-medium py-2">Fri</div>
+                    <div class="text-center text-gray-500 font-medium py-2">Sat</div>
+
+                    <!-- Calendar days -->
+                    <div class="calendar-day p-2 border rounded-lg text-gray-400">29</div>
+                    <div class="calendar-day p-2 border rounded-lg text-gray-400">30</div>
+                    <div class="calendar-day p-2 border rounded-lg">1</div>
+                    <div class="calendar-day p-2 border rounded-lg">2</div>
+                    <div class="calendar-day p-2 border rounded-lg">3</div>
+                    <div class="calendar-day p-2 border rounded-lg">4</div>
+                    <div class="calendar-day p-2 border rounded-lg">5</div>
+                    
+                    <div class="calendar-day p-2 border rounded-lg">6</div>
+                    <div class="calendar-day p-2 border rounded-lg">7</div>
+                    <div class="calendar-day p-2 border rounded-lg">8</div>
+                    <div class="calendar-day p-2 border rounded-lg">9</div>
+                    <div class="calendar-day p-2 border rounded-lg">10</div>
+                    <div class="calendar-day p-2 border rounded-lg">11</div>
+                    <div class="calendar-day p-2 border rounded-lg">12</div>
+
+                    <div class="calendar-day p-2 border rounded-lg">13</div>
+                    <div class="calendar-day p-2 border rounded-lg">14</div>
+                    <div class="calendar-day p-2 border rounded-lg">15</div>
+                    <div class="calendar-day p-2 border rounded-lg">16</div>
+                    <div class="calendar-day p-2 border rounded-lg">17</div>
+                    <div class="calendar-day p-2 border rounded-lg">18</div>
+                    <div class="calendar-day p-2 border rounded-lg">19</div>
+
+                    <div class="calendar-day p-2 border rounded-lg">20</div>
+                    <div class="calendar-day p-2 border rounded-lg">21</div>
+                    <div class="calendar-day p-2 border rounded-lg">22</div>
+                    <div class="calendar-day p-2 border rounded-lg">23</div>
+                    <div class="calendar-day p-2 border rounded-lg">24</div>
+                    <div class="calendar-day p-2 border rounded-lg">25</div>
+                    <div class="calendar-day p-2 border rounded-lg">26</div>
+
+                    <div class="calendar-day p-2 border rounded-lg today has-appointments">27
+                        <div class="h-1 w-1 bg-emerald-500 rounded-full mx-auto mt-1"></div>
+                    </div>
+                    <div class="calendar-day p-2 border rounded-lg has-appointments">28
+                        <div class="h-1 w-1 bg-emerald-500 rounded-full mx-auto mt-1"></div>
+                    </div>
+                    <div class="calendar-day p-2 border rounded-lg">29</div>
+                    <div class="calendar-day p-2 border rounded-lg has-appointments">30
+                        <div class="h-1 w-1 bg-emerald-500 rounded-full mx-auto mt-1"></div>
+                    </div>
+                    <div class="calendar-day p-2 border rounded-lg">31</div>
+                    <div class="calendar-day p-2 border rounded-lg text-gray-400">1</div>
+                    <div class="calendar-day p-2 border rounded-lg text-gray-400">2</div>
+                </div>
+            </div>
+
+            <!-- Upcoming Appointments -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Upcoming Appointments</h2>
+                
+                <!-- Today's date -->
+                <div class="text-sm text-gray-500 mb-4">Today, Oct 27</div>
+
+                <!-- Appointment Cards -->
+                <div class="space-y-4">
+                    <div class="appointment-card p-4 border rounded-lg hover:shadow-md cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium">John Doe</h3>
+                                <p class="text-sm text-gray-500">MMR Vaccination</p>
+                            </div>
+                            <span class="text-sm text-emerald-500">10:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="appointment-card p-4 border rounded-lg hover:shadow-md cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium">Sarah Smith</h3>
+                                <p class="text-sm text-gray-500">DPT Vaccination</p>
+                            </div>
+                            <span class="text-sm text-emerald-500">2:30 PM</span>
+                        </div>
+                    </div>
+
+                    <div class="text-sm text-gray-500 mt-6 mb-4">Tomorrow, Oct 28</div>
+
+                    <div class="appointment-card p-4 border rounded-lg hover:shadow-md cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-medium">Mike Johnson</h3>
+                                <p class="text-sm text-gray-500">Polio Vaccination</p>
+                            </div>
+                            <span class="text-sm text-emerald-500">11:15 AM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for calendar days
+            const calendarDays = document.querySelectorAll('.calendar-day');
+            calendarDays.forEach(day => {
+                day.addEventListener('click', function() {
+                    // Remove previous selection
+                    document.querySelectorAll('.calendar-day').forEach(d => {
+                        d.classList.remove('ring-2', 'ring-emerald-500');
+                    });
+                    // Add selection to clicked day
+                    if (!day.classList.contains('text-gray-400')) {
+                        day.classList.add('ring-2', 'ring-emerald-500');
+                    }
+                });
+            });
+
+            // Add hover effect for appointment cards
+            const appointmentCards = document.querySelectorAll('.appointment-card');
+            appointmentCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Handle appointment click - could show details modal
+                    console.log('Appointment clicked');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+.calendar-day {
+    aspect-ratio: 1;
+}
+.calendar-day.has-appointments {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+.calendar-day.today {
+    border: 2px solid #10B981;
+}
+.appointment-card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
