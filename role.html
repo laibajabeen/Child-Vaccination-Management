@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VacciTrack - Role Selection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 relative">
+    <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('/api/placeholder/1600/900')"></div>
+    <div class="flex justify-center items-center h-screen relative z-10">
+        <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md transform transition duration-500 hover:scale-105">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-2">VacciTrack</h1>
+                <p class="text-gray-500">Vaccine Management System</p>
+            </div>
+            <p class="text-gray-600 text-center mb-6">Please select your role:</p>
+            <div class="space-y-4">
+                <button class="bg-emerald-500 text-black px-4 py-3 rounded-lg w-full hover:bg-emerald-600 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-md" id="parent-button">
+                    <span class="font-semibold">I'm a Parent</span>
+                </button>
+                <button class="bg-blue-500 text-white px-4 py-3 rounded-lg w-full hover:bg-blue-600 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-md" id="admin-button">
+                    <span class="font-semibold">I'm an Admin</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const parentButton = document.getElementById('parent-button');
+            const adminButton = document.getElementById('admin-button');
+            
+            [parentButton, adminButton].forEach(button => {
+                button.addEventListener('click', function() {
+                    const isParent = this.id === 'parent-button';
+                    window.location.href = isParent ? 'parent-dashboard.html' : 'admin-dashboard.html';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
