@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -17,6 +18,7 @@ mongoose.connect('mongodb://127.0.0.1/children', {
 .then(() => console.log("MongoDB connection successful"))
 .catch(err => console.error("MongoDB connection error:", err));
 
+// User Schema
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -35,8 +37,44 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-const Users = mongoose.model("data", userSchema);
+// Child Vaccination Schema
+const childVaccinationSchema = new mongoose.Schema({
+  childName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  dateOfBirth: {
+    type: Date,
+    required: true
+  },
+  gender: {
+    type: String,
+    required: true,
+    enum: ['male', 'female', 'other']
+  },
+  vaccines: [{
+    name: String,
+    dateAdministered: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  parentEmail: {
+    type: String,
+    required: true,
+    ref: 'User'
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
 
+const Users = mongoose.model("data", userSchema);
+const ChildVaccination = mongoose.model("ChildVaccination", childVaccinationSchema);
+
+// Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
@@ -76,7 +114,37 @@ app.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Invalid email or password' });
   }
 
-  res.json({ message: 'Login successful' });
+  res.json({ message: 'Login successful', email: user.email });
+});
+
+// New route to handle child vaccination registration
+app.post('/register-vaccination', async (req, res) => {
+  try {
+    const { childName, dateOfBirth, gender, vaccines, parentEmail } = req.body;
+
+    const newVaccination = new ChildVaccination({
+      childName,
+      dateOfBirth,
+      gender,
+      vaccines: vaccines.map(vaccine => ({ name: vaccine })),
+      parentEmail
+    });
+
+    await newVaccination.save();
+    res.status(201).json({ message: 'Vaccination registration successful', data: newVaccination });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Route to get vaccination records for a parent
+app.get('/vaccination-records/:email', async (req, res) => {
+  try {
+    const records = await ChildVaccination.find({ parentEmail: req.params.email });
+    res.json(records);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 app.listen(port, () => {
