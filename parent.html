@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VacciTrack - Child Vaccination</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+            <h1 class="text-2xl font-bold text-center mb-6">Child Vaccination Registration</h1>
+            
+            <form id="childRegistrationForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Child Details</label>
+                    <input type="text" id="childName" placeholder="Child's Full Name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="date" id="childDOB" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <select id="gender" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">Available Vaccines</label>
+                    <div id="vaccineList" class="space-y-2">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="bcg" name="vaccine" value="BCG" class="mr-2">
+                            <label for="bcg">BCG Vaccine</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="polio" name="vaccine" value="Polio" class="mr-2">
+                            <label for="polio">Polio Vaccine</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="mmr" name="vaccine" value="MMR" class="mr-2">
+                            <label for="mmr">MMR Vaccine</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="hepatitisB" name="vaccine" value="Hepatitis B" class="mr-2">
+                            <label for="hepatitisB">Hepatitis B Vaccine</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300">
+                    Register Child
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('childRegistrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const childName = document.getElementById('childName').value;
+            const childDOB = document.getElementById('childDOB').value;
+            const gender = document.getElementById('gender').value;
+            
+            const selectedVaccines = Array.from(
+                document.querySelectorAll('input[name="vaccine"]:checked')
+            ).map(el => el.value);
+
+            if (selectedVaccines.length === 0) {
+                alert('Please select at least one vaccine');
+                return;
+            }
+
+            const childData = {
+                name: childName,
+                dob: childDOB,
+                gender: gender,
+                vaccines: selectedVaccines
+            };
+
+            console.log('Child Registration Data:', childData);
+            // In a real application, you would send this data to a backend server
+            alert('Child registered successfully!');
+        });
+    </script>
+</body>
+</html>
