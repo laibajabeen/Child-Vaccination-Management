@@ -1,24 +1,27 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const vaccinationManager = require('./vaccinationManager');
+const { ParentNotificationObserver, HealthcareProviderObserver, ReminderSystemObserver } = require('./observers');
 
 const port = process.env.PORT || 3000;
 const app = express();
 
+// Middleware
 app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// MongoDB Connection
 mongoose.connect('mongodb://127.0.0.1/children', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
-.then(() => console.log("MongoDB connection successful"))
-.catch(err => console.error("MongoDB connection error:", err));
+  .then(() => console.log("MongoDB connection successful"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
-// User Schema
+// Database Schemas
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -37,7 +40,6 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Child Vaccination Schema
 const childVaccinationSchema = new mongoose.Schema({
   childName: {
     type: String,
@@ -74,11 +76,21 @@ const childVaccinationSchema = new mongoose.Schema({
 const Users = mongoose.model("data", userSchema);
 const ChildVaccination = mongoose.model("ChildVaccination", childVaccinationSchema);
 
+// Observer Registration
+const parentObserver = new ParentNotificationObserver();
+const healthcareObserver = new HealthcareProviderObserver();
+const reminderObserver = new ReminderSystemObserver();
+
+vaccinationManager.addObserver(parentObserver);
+vaccinationManager.addObserver(healthcareObserver);
+vaccinationManager.addObserver(reminderObserver);
+
 // Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
 
+// Signup Endpoint
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
 
@@ -97,6 +109,7 @@ app.post('/signup', async (req, res) => {
   res.status(201).json({ message: 'User registered successfully' });
 });
 
+// Login Endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -117,10 +130,20 @@ app.post('/login', async (req, res) => {
   res.json({ message: 'Login successful', email: user.email });
 });
 
-// New route to handle child vaccination registration
+// Register Vaccination Endpoint
 app.post('/register-vaccination', async (req, res) => {
   try {
     const { childName, dateOfBirth, gender, vaccines, parentEmail } = req.body;
+
+    // Validate childName: Only alphabets and spaces allowed
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(childName)) {
+      return res.status(400).json({ error: 'Child name must contain only alphabets and spaces.' });
+    }
+
+    if (!Array.isArray(vaccines) || vaccines.length === 0) {
+      return res.status(400).json({ error: 'At least one vaccine must be selected.' });
+    }
 
     const newVaccination = new ChildVaccination({
       childName,
@@ -131,13 +154,29 @@ app.post('/register-vaccination', async (req, res) => {
     });
 
     await newVaccination.save();
+
+    // Notify observers
+    vaccinationManager.addVaccinationRecord(parentEmail, newVaccination);
+
     res.status(201).json({ message: 'Vaccination registration successful', data: newVaccination });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// Route to get vaccination records for a parent
+// Schedule Vaccine Endpoint
+app.post('/schedule-vaccine', (req, res) => {
+  const { childId, schedule } = req.body;
+
+  if (!childId || !schedule) {
+    return res.status(400).json({ error: 'Child ID and schedule are required' });
+  }
+
+  vaccinationManager.addVaccineSchedule(childId, schedule);
+  res.status(201).json({ message: `Schedule added for child ${childId}` });
+});
+
+// Fetch Vaccination Records Endpoint
 app.get('/vaccination-records/:email', async (req, res) => {
   try {
     const records = await ChildVaccination.find({ parentEmail: req.params.email });
@@ -147,10 +186,12 @@ app.get('/vaccination-records/:email', async (req, res) => {
   }
 });
 
+// Server Startup
 app.listen(port, () => {
   console.log(`Server Started on port ${port}`);
 });
 
+// Graceful Shutdown
 process.on('SIGTERM', () => {
   mongoose.connection.close();
   process.exit(0);
@@ -160,52 +201,3 @@ process.on('SIGINT', () => {
   mongoose.connection.close();
   process.exit(0);
 });
-// server.js
-import vaccinationManager from './vaccinationManager.js';
-import { 
-    ParentNotificationObserver, 
-    HealthcareProviderObserver, 
-    ReminderSystemObserver 
-} from './observers.js';
-
-// Initialize observers
-const parentNotifier = new ParentNotificationObserver();
-const healthcareProvider = new HealthcareProviderObserver();
-const reminderSystem = new ReminderSystemObserver();
-
-// Register observers with the vaccination manager
-vaccinationManager.addObserver(parentNotifier);
-vaccinationManager.addObserver(healthcareProvider);
-vaccinationManager.addObserver(reminderSystem);
-
-// Example route handler for vaccination registration
-app.post('/register-vaccination', (req, res) => {
-    try {
-        const childData = req.body;
-        
-        // Use the singleton instance to manage the vaccination record
-        vaccinationManager.addVaccinationRecord(childData.childId, {
-            childName: childData.childName,
-            dateOfBirth: childData.dateOfBirth,
-            vaccines: childData.vaccines,
-            parentEmail: childData.parentEmail,
-            registeredDate: new Date()
-        });
-
-        // Schedule will automatically notify observers
-        vaccinationManager.addVaccineSchedule(childData.childId, {
-            childId: childData.childId,
-            vaccines: childData.vaccines,
-            scheduleDates: generateVaccineSchedule(childData)
-        });
-
-        res.json({ success: true, message: 'Registration successful' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-function generateVaccineSchedule(childData) {
-    // Implementation to generate vaccine schedule based on child's age and selected vaccines
-    return [];
-}

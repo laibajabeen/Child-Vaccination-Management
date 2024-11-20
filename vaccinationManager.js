@@ -54,4 +54,4 @@ class VaccinationManager {
 const vaccinationManager = new VaccinationManager();
 Object.freeze(vaccinationManager);
 
-export default vaccinationManager;
+module.exports = vaccinationManager

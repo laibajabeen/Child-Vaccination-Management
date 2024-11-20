@@ -76,9 +76,8 @@ class ReminderSystemObserver extends VaccinationObserver {
         console.log(`Reminders scheduled for child ${data.childId}`);
     }
 }
-
-export { 
-    ParentNotificationObserver, 
-    HealthcareProviderObserver, 
-    ReminderSystemObserver 
-};
+module.exports = {
+    ParentNotificationObserver,
+    HealthcareProviderObserver,
+    ReminderSystemObserver
+}
