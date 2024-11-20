@@ -7,7 +7,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 relative">
-    <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('pexels-mufidpwt-9240709.jpg')"></div>
+    <div class="absolute inset-0 bg-cover bg-center opacity-30"    style="
+    background-image: linear-gradient(rgba(64, 179, 162, 0.7), rgba(64, 179, 162, 0.7)), 
+                      url('pexels-mufidpwt-9240709.jpg');
+    opacity: 0.8;"></div>
     <div class="flex justify-center items-center h-screen relative z-10">
         <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md transform transition duration-500 hover:scale-105">
             <div class="text-center mb-6">
@@ -16,13 +19,20 @@
             </div>
             <p class="text-gray-600 text-center mb-6">Please select your role:</p>
             <div class="space-y-4">
-                <button class="bg-emerald-500 text-black px-4 py-3 rounded-lg w-full hover:bg-emerald-600 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-md" id="parent-button">
+                <button 
+                    style="background-color: #40b3a2;" 
+                    class="text-white px-4 py-3 rounded-lg w-full hover:bg-[#37a193] transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#40b3a2] shadow-md" 
+                    id="parent-button">
                     <span class="font-semibold">I'm a Parent</span>
                 </button>
-                <button class="bg-blue-500 text-white px-4 py-3 rounded-lg w-full hover:bg-blue-600 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-md" id="admin-button">
+                <button 
+                    style="background-color: #40b3a2;" 
+                    class="text-white px-4 py-3 rounded-lg w-full hover:bg-[#37a193] transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#40b3a2] shadow-md" 
+                    id="admin-button">
                     <span class="font-semibold">I'm an Admin</span>
                 </button>
             </div>
+            
         </div>
     </div>
     <script>
@@ -30,13 +40,15 @@
             const parentButton = document.getElementById('parent-button');
             const adminButton = document.getElementById('admin-button');
             
-            [parentButton, adminButton].forEach(button => {
-                button.addEventListener('click', function() {
-                    const isParent = this.id === 'parent-button';
-                    window.location.href = isParent ? 'parent-dashboard.html' : 'admin-dashboard.html';
-                });
+            // Add event listeners for both buttons
+            parentButton.addEventListener('click', function() {
+                window.location.href = 'parent.html'; // Redirects to parent.html
+            });
+
+            adminButton.addEventListener('click', function() {
+                window.location.href = 'mainpage.html'; // Redirects to mainnpage.html
             });
         });
-    </script>
+    </script
 </body>
 </html>
