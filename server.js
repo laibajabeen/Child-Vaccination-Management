@@ -160,3 +160,52 @@ process.on('SIGINT', () => {
   mongoose.connection.close();
   process.exit(0);
 });
+// server.js
+import vaccinationManager from './vaccinationManager.js';
+import { 
+    ParentNotificationObserver, 
+    HealthcareProviderObserver, 
+    ReminderSystemObserver 
+} from './observers.js';
+
+// Initialize observers
+const parentNotifier = new ParentNotificationObserver();
+const healthcareProvider = new HealthcareProviderObserver();
+const reminderSystem = new ReminderSystemObserver();
+
+// Register observers with the vaccination manager
+vaccinationManager.addObserver(parentNotifier);
+vaccinationManager.addObserver(healthcareProvider);
+vaccinationManager.addObserver(reminderSystem);
+
+// Example route handler for vaccination registration
+app.post('/register-vaccination', (req, res) => {
+    try {
+        const childData = req.body;
+        
+        // Use the singleton instance to manage the vaccination record
+        vaccinationManager.addVaccinationRecord(childData.childId, {
+            childName: childData.childName,
+            dateOfBirth: childData.dateOfBirth,
+            vaccines: childData.vaccines,
+            parentEmail: childData.parentEmail,
+            registeredDate: new Date()
+        });
+
+        // Schedule will automatically notify observers
+        vaccinationManager.addVaccineSchedule(childData.childId, {
+            childId: childData.childId,
+            vaccines: childData.vaccines,
+            scheduleDates: generateVaccineSchedule(childData)
+        });
+
+        res.json({ success: true, message: 'Registration successful' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+function generateVaccineSchedule(childData) {
+    // Implementation to generate vaccine schedule based on child's age and selected vaccines
+    return [];
+}
