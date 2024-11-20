@@ -193,9 +193,15 @@ app.listen(port, () => {
 
 // Graceful Shutdown
 process.on('SIGTERM', () => {
-  mongoose.connection.close();
-  process.exit(0);
+  server.close(() => {
+      console.log('Server shutting down');
+      mongoose.connection.close(() => {
+          console.log('MongoDB connection closed');
+          process.exit(0);
+      });
+  });
 });
+
 
 process.on('SIGINT', () => {
   mongoose.connection.close();
