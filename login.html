@@ -1,218 +1,4 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vaccination Management System - Login/Signup</title>
-    <link rel="stylesheet" href="login.css">
-</head>
-<body>
-    <div>
-    </div>
-    <div class="container">
-        <div class="form-container sign-up-container">
-            <form id="signupForm" action="#" method="POST">
-                <h1>Create Account</h1>
-                <div class="social-container">
-                    <a href="#"><i>f</i></a>
-                    <a href="#"><i>G</i></a>
-                    <a href="#"><i>in</i></a>
-                </div>
-                <div class="divider">or use your email for registration</div>
-                <input type="text" name="name" id="signupName" placeholder="Name" class="form-control" required/>
-                <input type="email" name="email" id="signupEmail" placeholder="Email" class="form-control" required/>
-                <input type="password" name="password" id="signupPassword" placeholder="Password" class="form-control" required/>
-                <div id="signupMessage" class="message"></div>
-                <button type="submit">Sign Up</button>
-            </form>
-        </div>
-        <div class="form-container sign-in-container">
-            <form id="loginForm" action="#" method="POST">
-                <h1>Welcome Back!</h1>
-                <div class="social-container">
-                    <a href="#"><i>f</i></a>
-                    <a href="#"><i>G</i></a>
-                    <a href="#"><i>in</i></a>
-                </div>
-                <div class="divider">or use your account</div>
-                <input type="email" name="email" id="loginEmail" placeholder="Email" class="form-control" required/>
-                <input type="password" name="password" id="loginPassword" placeholder="Password" class="form-control" required/>
-                <div id="loginMessage" class="message"></div>
-                <button type="submit">Sign In</button>
-            </form>
-        </div>
-        <div class="overlay-container">
-            <div class="overlay">
-                <div class="overlay-panel overlay-left">
-                    <h1>Welcome Back!</h1>
-                    <p>To keep connected with us please login with your personal info</p>
-                    <button class="ghost" id="signIn">Sign In</button>
-                </div>
-                <div class="overlay-panel overlay-right">
-                    <h1>Hello, Friend!</h1>
-                    <p>Enter your personal details and start journey with us</p>
-                    <button class="ghost" id="signUp">Sign Up</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script>
-        const signUpButton = document.getElementById('signUp');
-        const signInButton = document.getElementById('signIn');
-        const container = document.querySelector('.container');
- 
-        signUpButton.addEventListener('click', () => {
-            container.classList.add('right-panel-active');
-        });
-
-        signInButton.addEventListener('click', () => {
-            container.classList.remove('right-panel-active');
-        });
-
-        // Input Validation Functions
-        function validateName(name) {
-            const regex = /^[A-Za-z\s]+$/;  // Only alphabets and spaces
-            return regex.test(name);
-        }
-
-        function validateEmail(email) {
-            const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;  // Valid email format
-            return regex.test(email);
-        }
-
-        function validatePassword(password) {
-            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;  // At least 8 chars, uppercase, lowercase, number, special char
-            return regex.test(password);
-        }
-
-        function validateUsername(username) {
-            const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/;  // Alphanumeric and at least 5 characters
-            return regex.test(username);
-        }
-
-        // Form submission handler for Sign Up
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const messageDiv = document.getElementById('signupMessage');
-
-            // Validate Name
-            if (!validateName(name)) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'Name should only contain alphabets.';
-                return;
-            }
-
-            // Validate Email
-            if (!validateEmail(email)) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'Please enter a valid email address.';
-                return;
-            }
-
-            // Validate Password
-            if (!validatePassword(password)) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'Password must include uppercase, lowercase, numeric, and special characters.';
-                return;
-            }
-
-            const formData = new FormData(e.target);
-            
-            try {
-                const response = await fetch('/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: formData.get('name'),
-                        email: formData.get('email'),
-                        password: formData.get('password')
-                    })
-                });
-
-                const data = await response.json();
-                messageDiv.style.display = 'block';
-                
-                if (!response.ok) {
-                    messageDiv.className = 'message error-message';
-                    messageDiv.textContent = data.error;
-                } else {
-                    messageDiv.className = 'message success-message';
-                    messageDiv.textContent = data.message;
-                    // Optional: Switch to login form after successful signup
-                    setTimeout(() => {
-                        container.classList.remove('right-panel-active');
-                    }, 1500);
-                }
-            } catch (error) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'An error occurred. Please try again.';
-            }
-        });
-
-        // Form submission handler for Sign In
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const messageDiv = document.getElementById('loginMessage');
-
-            // Validate Email
-            if (!validateEmail(email)) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'Please enter a valid email address.';
-                return;
-            }
-
-            // Validate Password
-            if (!password) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'Password cannot be empty.';
-                return;
-            }
-
-            try {
-                const response = await fetch('/signin', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-                messageDiv.style.display = 'block';
-                
-                if (!response.ok) {
-                    messageDiv.className = 'message error-message';
-                    messageDiv.textContent = data.error;
-                } else {
-                    messageDiv.className = 'message success-message';
-                    messageDiv.textContent = 'Logged in successfully!';
-                    // Optionally redirect to the dashboard or home page
-                }
-            } catch (error) {
-                messageDiv.style.display = 'block';
-                messageDiv.className = 'message error-message';
-                messageDiv.textContent = 'An error occurred. Please try again.';
-            }
-        });
-    </script>
-</body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -227,11 +13,7 @@
         <div class="form-container sign-up-container">
             <form id="signupForm" action="#" method="POST">
                 <h1>Create Account</h1>
-                <div class="social-container">
-                    <a href="#"><i>f</i></a>
-                    <a href="#"><i>G</i></a>
-                    <a href="#"><i>in</i></a>
-                </div>
+             
                 <div class="divider">or use your email for registration</div>
                 <input type="text" name="name" id="signupName" placeholder="Name" class="form-control" required/>
                 <input type="email" name="email" id="signupEmail" placeholder="Email" class="form-control" required/>
@@ -261,11 +43,17 @@
                     <h1>Welcome Back!</h1>
                     <p>To keep connected with us please login with your personal info</p>
                     <button class="ghost" id="signIn">Sign In</button>
+                    <div class="social-container">
+                        <a href="#"><i>f</i></a>
+                        <a href="#"><i>G</i></a>
+                        <a href="#"><i>in</i></a>
+                    </div>
                 </div>
                 <div class="overlay-panel overlay-right">
                     <h1>Hello, Friend!</h1>
                     <p>Enter your personal details and start your journey with us</p>
                     <button class="ghost" id="signUp">Sign Up</button>
+                    
                 </div>
             </div>
         </div>

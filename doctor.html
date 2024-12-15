@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VacciTrack - Doctor Dashboard</title>
+    <link rel="stylesheet" href="doctor.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="header-content">
+                <h1>Doctor Dashboard</h1>
+                <div class="user-section">
+                    <span>Dr. [Name]</span>
+                    <button class="logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="dashboard-grid">
+                <div class="dashboard-card patient-records">
+                    <h2>Patient Records</h2>
+                    <p>View and manage patient vaccination histories</p>
+                    <button>View Records</button>
+                </div>
+
+                <div class="dashboard-card schedule-vaccines">
+                    <h2>Schedule Vaccines</h2>
+                    <p>Create and manage vaccination schedules</p>
+                    <button>Create Schedule</button>
+                </div>
+
+                <div class="dashboard-card vaccine-inventory">
+                    <h2>Vaccine Inventory</h2>
+                    <p>Track vaccine stocks and availability</p>
+                    <button>Check Inventory</button>
+                </div>
+            </div>
+
+            <section class="patient-alerts">
+                <h2>Recent Patient Alerts</h2>
+                <div class="alert pending">
+                    <p>Pending Vaccination: MMR for Child A</p>
+                    <span>Due in 2 weeks</span>
+                </div>
+                <div class="alert overdue">
+                    <p>Overdue Vaccination: Polio for Child B</p>
+                    <span>Missed scheduled date</span>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

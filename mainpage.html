@@ -55,9 +55,16 @@
             </ul>
         </div>
         
-
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Topbar with Sign Out Button -->
+            <div class="topbar">
+                <button class="sign-out-btn" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sign Out
+                </button>
+            </div>
+
             <div class="header">
                 <h1 class="page-title">Dashboard</h1>
                 <button class="add-btn" onclick="openModal()">
@@ -188,6 +195,17 @@
             // Add your form submission logic here
             closeModal();
         });
+
+        // Sign Out Function
+        function signOut() {
+            // Add sign-out logic here
+            // This might include:
+            // 1. Clearing session/local storage
+            // 2. Redirecting to login page
+            // For now, it's a placeholder
+            alert('Signing out...');
+            window.location.href = 'login.html'; // Redirect to login page
+        }
     </script>
 </body>
 </html>
