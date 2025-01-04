@@ -1,0 +1,191 @@
+// Panel Switch Animation
+const setupPanelSwitch = () => {
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.querySelector('.container');
+  
+    signUpButton.addEventListener('click', () => {
+      container.classList.add('right-panel-active');
+    });
+  
+    signInButton.addEventListener('click', () => {
+      container.classList.remove('right-panel-active');
+    });
+  };
+  
+  // Input Validation Functions
+  function validateName(name) {
+    const regex = /^[A-Za-z\s]{2,}$/; // At least 2 characters, only letters and spaces
+    return regex.test(name);
+  }
+  
+  function validateEmail(email) {
+    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+  }
+  
+  function validatePassword(password) {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    return regex.test(password);
+  }
+  
+  // Login Form Handler
+  const setupLoginHandler = () => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const messageDiv = document.getElementById('loginMessage');
+  
+      // Clear previous messages
+      messageDiv.style.display = 'none';
+      messageDiv.textContent = '';
+  
+      // Validate Email
+      if (!validateEmail(email)) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'message error-message';
+        messageDiv.textContent = 'Please enter a valid email address.';
+        return;
+      }
+  
+      // Validate Password
+      if (!password) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'message error-message';
+        messageDiv.textContent = 'Password cannot be empty.';
+        return;
+      }
+  
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+  
+        const data = await response.json();
+        messageDiv.style.display = 'block';
+  
+        if (!response.ok) {
+          throw new Error(data.error || 'Login failed');
+        }
+  
+        messageDiv.className = 'message success-message';
+        messageDiv.textContent = 'Login successful!';
+  
+        // Store user data
+        localStorage.setItem('userEmail', email);
+  
+        // Redirect after successful login
+        setTimeout(() => {
+          window.location.href = 'role.html';
+        }, 1500);
+      } catch (error) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'message error-message';
+        messageDiv.textContent = error.message || 'An error occurred. Please try again later.';
+      }
+    });
+  };
+  
+  // Signup Form Handler
+  const setupSignupHandler = () => {
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+  
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const messageDiv = document.getElementById('signupMessage');
+  
+      // Clear previous messages
+      messageDiv.style.display = 'none';
+      messageDiv.textContent = '';
+  
+      // Validate Name
+      if (!validateName(name)) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'message error-message';
+        messageDiv.textContent = 'Name should be at least 2 characters long and contain only letters and spaces.';
+        return;
+      }
+  
+      // Validate Email
+      if (!validateEmail(email)) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'message error-message';
+        messageDiv.textContent = 'Please enter a valid email address.';
+        return;
+      }
+  
+      // Validate Password
+      if (!validatePassword(password)) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'message error-message';
+        messageDiv.textContent = 'Password must be at least 8 characters long and include: uppercase letter, lowercase letter, number, and special character.';
+        return;
+      }
+  
+      try {
+        const response = await fetch('/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email, password }),
+        });
+  
+        const data = await response.json();
+        messageDiv.style.display = 'block';
+  
+        if (!response.ok) {
+          throw new Error(data.error || 'Signup failed');
+        }
+  
+        messageDiv.className = 'message success-message';
+        messageDiv.textContent = 'Signup successful!';
+  
+        // Store user data
+        localStorage.setItem('userEmail', email);
+  
+        // Redirect after successful signup
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1500);
+      } catch (error) {
+        messageDiv.style.display = 'block';
+        messageDiv.className = 'message error-message';
+        messageDiv.textContent = error.message || 'An error occurred. Please try again later.';
+      }
+    });
+  };
+  
+  // Initialize all functionality
+  const initializeApp = () => {
+    setupPanelSwitch();
+    setupLoginHandler();
+    setupSignupHandler();
+  };
+  
+  // Automatically initialize if script is directly loaded
+  if (typeof window !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeApp();
+    });
+  }
+  
+  // Export for CommonJS compatibility
+  module.exports = {
+    setupPanelSwitch,
+    validateName,
+    validateEmail,
+    validatePassword,
+    setupLoginHandler,
+    setupSignupHandler,
+    initializeApp,
+  };
+  
