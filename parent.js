@@ -86,36 +86,3 @@ async function loadVaccinationRecords() {
         console.error('Error loading vaccination records:', error);
     }
 }
-document.addEventListener('DOMContentLoaded', () => {
-    // Fetch and display FAQs
-    fetch('/faqs')
-        .then(response => response.json())
-        .then(data => {
-            const faqList = document.getElementById('faqList');
-            faqList.innerHTML = ''; // Clear any existing content
-
-            if (data.length > 0) {
-                data.forEach(faq => {
-                    const faqItem = document.createElement('div');
-                    faqItem.classList.add('faq-item');
-                    
-                    const question = document.createElement('h3');
-                    question.textContent = faq.question;
-                    
-                    const answer = document.createElement('p');
-                    answer.textContent = faq.answer;
-
-                    faqItem.appendChild(question);
-                    faqItem.appendChild(answer);
-                    faqList.appendChild(faqItem);
-                });
-            } else {
-                faqList.innerHTML = '<p>No FAQs available at the moment.</p>';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching FAQs:', error);
-            const faqList = document.getElementById('faqList');
-            faqList.innerHTML = '<p>Failed to load FAQs. Please try again later.</p>';
-        });
-});

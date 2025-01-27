@@ -68,15 +68,68 @@
                 </div>
             </div>
         </div>
-        <!-- FAQ Section -->
         <div class="faq-section">
-            <h2>Frequently Asked Questions</h2>
-            <div id="faqList">
-                <!-- FAQs will be dynamically loaded here -->
-            </div>
+            <h1>FAQs</h1>
+            <div id="faqContainer"></div>
         </div>
-    </div>
-
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            // Connect to Socket.IO server
+            const socket = io();
+    
+            // Listen for connection
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                // Request FAQs immediately after connection
+                socket.emit('fetchFAQs');
+            });
+    
+            // Listen for FAQ data
+            socket.on('faqsData', (faqs) => {
+                console.log('Received FAQs:', faqs);
+                displayFAQs(faqs);
+            });
+    
+            // Display FAQs in the container
+            function displayFAQs(faqs) {
+                const container = document.getElementById('faqContainer');
+                container.innerHTML = ''; // Clear existing content
+    
+                faqs.forEach(faq => {
+                    const faqDiv = document.createElement('div');
+                    faqDiv.className = 'faq-item';
+                    
+                    faqDiv.innerHTML = `
+                        <div class="faq-question">${faq.question}</div>
+                        <div class="faq-answer">${faq.answer}</div>
+                    `;
+    
+                    // Add click event to toggle answer
+                    faqDiv.querySelector('.faq-question').addEventListener('click', function() {
+                        const parent = this.parentElement;
+                        // Toggle active class
+                        if (parent.classList.contains('active')) {
+                            parent.classList.remove('active');
+                        } else {
+                            // Close other open FAQs
+                            document.querySelectorAll('.faq-item.active').forEach(item => {
+                                item.classList.remove('active');
+                            });
+                            parent.classList.add('active');
+                        }
+                    });
+    
+                    container.appendChild(faqDiv);
+                });
+            }
+    
+            // Error handling for socket connection
+            socket.on('connect_error', (error) => {
+                console.error('Connection error:', error);
+                document.getElementById('faqContainer').innerHTML = 
+                    '<p style="color: red;">Error connecting to server. Please try again later.</p>';
+            });
+        </script>
     <script src="parent.js">
     
 

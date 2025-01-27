@@ -4,9 +4,13 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const vaccinationManager = require('./vaccinationManager');
 const { ParentNotificationObserver, HealthcareProviderObserver, ReminderSystemObserver } = require('./observers');
+const { Server } = require("socket.io");
+const http = require("http");
 
 const port = process.env.PORT || 3000;
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -211,8 +215,26 @@ app.post('/faqs', async (req, res) => {
   }
 });
 
+// Socket.IO for FAQs
+io.on("connection", (socket) => {
+  console.log("A client connected");
+
+  socket.on("fetchFAQs", async () => {
+    try {
+      const faqs = await FAQ.find({});
+      socket.emit("faqsData", faqs);
+    } catch (err) {
+      console.error("Error fetching FAQs:", err);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
+
 // Server Startup
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
 
