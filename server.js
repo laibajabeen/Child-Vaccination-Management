@@ -9,9 +9,9 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // Middleware
-app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname))); // Serve static files from the current directory
 
 // MongoDB Connection
 mongoose.connect('mongodb://127.0.0.1/children', {
@@ -73,8 +73,26 @@ const childVaccinationSchema = new mongoose.Schema({
   }
 });
 
-const Users = mongoose.model("data", userSchema);
+const faqSchema = new mongoose.Schema({
+  question: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  answer: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Users = mongoose.model("Users", userSchema);
 const ChildVaccination = mongoose.model("ChildVaccination", childVaccinationSchema);
+const FAQ = mongoose.model("FAQ", faqSchema);
 
 // Observer Registration
 const parentObserver = new ParentNotificationObserver();
@@ -87,7 +105,7 @@ vaccinationManager.addObserver(reminderObserver);
 
 // Routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'login.html'));
+  res.sendFile(path.join(__dirname, 'vaccinationrecord.html')); // Serve the HTML file
 });
 
 // Signup Endpoint
@@ -135,7 +153,6 @@ app.post('/register-vaccination', async (req, res) => {
   try {
     const { childName, dateOfBirth, gender, vaccines, parentEmail } = req.body;
 
-    // Validate childName: Only alphabets and spaces allowed
     const nameRegex = /^[a-zA-Z\s]+$/;
     if (!nameRegex.test(childName)) {
       return res.status(400).json({ error: 'Child name must contain only alphabets and spaces.' });
@@ -155,7 +172,6 @@ app.post('/register-vaccination', async (req, res) => {
 
     await newVaccination.save();
 
-    // Notify observers
     vaccinationManager.addVaccinationRecord(parentEmail, newVaccination);
 
     res.status(201).json({ message: 'Vaccination registration successful', data: newVaccination });
@@ -164,23 +180,32 @@ app.post('/register-vaccination', async (req, res) => {
   }
 });
 
-// Schedule Vaccine Endpoint
-app.post('/schedule-vaccine', (req, res) => {
-  const { childId, schedule } = req.body;
-
-  if (!childId || !schedule) {
-    return res.status(400).json({ error: 'Child ID and schedule are required' });
+// Fetch All Vaccination Records Endpoint
+app.get('/api/childvaccinations', async (req, res) => {
+  try {
+    const records = await ChildVaccination.find();
+    res.json(records);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch vaccination records.' });
   }
-
-  vaccinationManager.addVaccineSchedule(childId, schedule);
-  res.status(201).json({ message: `Schedule added for child ${childId}` });
 });
 
-// Fetch Vaccination Records Endpoint
-app.get('/vaccination-records/:email', async (req, res) => {
+// FAQ Endpoints
+app.get('/faqs', async (req, res) => {
   try {
-    const records = await ChildVaccination.find({ parentEmail: req.params.email });
-    res.json(records);
+    const faqs = await FAQ.find();
+    res.json(faqs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch FAQs.' });
+  }
+});
+
+app.post('/faqs', async (req, res) => {
+  try {
+    const { question, answer } = req.body;
+    const newFAQ = new FAQ({ question, answer });
+    await newFAQ.save();
+    res.status(201).json({ message: 'FAQ added successfully', data: newFAQ });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -188,20 +213,16 @@ app.get('/vaccination-records/:email', async (req, res) => {
 
 // Server Startup
 app.listen(port, () => {
-  console.log(`Server Started on port ${port}`);
+  console.log(`Server started on port ${port}`);
 });
 
 // Graceful Shutdown
 process.on('SIGTERM', () => {
-  server.close(() => {
-      console.log('Server shutting down');
-      mongoose.connection.close(() => {
-          console.log('MongoDB connection closed');
-          process.exit(0);
-      });
+  mongoose.connection.close(() => {
+    console.log('MongoDB connection closed');
+    process.exit(0);
   });
 });
-
 
 process.on('SIGINT', () => {
   mongoose.connection.close();
