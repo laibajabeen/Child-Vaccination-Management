@@ -188,7 +188,18 @@ app.post('/register-vaccination', async (req, res) => {
 app.get('/api/childvaccinations', async (req, res) => {
   try {
     const records = await ChildVaccination.find();
-    res.json(records);
+
+    // Convert dates to a readable format before sending the response
+    const formattedRecords = records.map(record => ({
+      ...record.toObject(),
+      dateOfBirth: record.dateOfBirth.toLocaleDateString(),
+      vaccines: record.vaccines.map(vaccine => ({
+        ...vaccine,
+        dateAdministered: vaccine.dateAdministered.toLocaleDateString()
+      }))
+    }));
+
+    res.json(formattedRecords);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch vaccination records.' });
   }
