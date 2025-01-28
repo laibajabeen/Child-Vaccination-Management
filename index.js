@@ -155,7 +155,7 @@ const setupSignupHandler = () => {
 
       // Redirect after successful signup
       setTimeout(() => {
-        window.location.href = 'mainpage.html';
+        window.location.href = 'role.html';
       }, 1500);
     } catch (error) {
       messageDiv.style.display = 'block';
