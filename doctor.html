@@ -19,38 +19,56 @@
         </header>
 
         <main>
-            <div class="dashboard-grid">
-                <div class="dashboard-card patient-records">
-                    <h2>Patient Records</h2>
-                    <p>View and manage patient vaccination histories</p>
-                    <button>View Records</button>
-                </div>
-
-                <div class="dashboard-card schedule-vaccines">
-                    <h2>Schedule Vaccines</h2>
-                    <p>Create and manage vaccination schedules</p>
-                    <button>Create Schedule</button>
-                </div>
-
-                <div class="dashboard-card vaccine-inventory">
-                    <h2>Vaccine Inventory</h2>
-                    <p>Track vaccine stocks and availability</p>
-                    <button>Check Inventory</button>
-                </div>
-            </div>
+           
 
             <section class="patient-alerts">
                 <h2>Recent Patient Alerts</h2>
-                <div class="alert pending">
-                    <p>Pending Vaccination: MMR for Child A</p>
-                    <span>Due in 2 weeks</span>
-                </div>
-                <div class="alert overdue">
-                    <p>Overdue Vaccination: Polio for Child B</p>
-                    <span>Missed scheduled date</span>
+                <div id="alerts-container">
+                    <!-- Alerts will be dynamically inserted here -->
                 </div>
             </section>
         </main>
     </div>
+
+    <script>
+    async function fetchAlerts() {
+            try {
+                const response = await fetch('http://localhost:3000/api/alerts');
+                const data = await response.json();
+                
+                const alertsContainer = document.getElementById('alerts-container');
+                alertsContainer.innerHTML = ''; // Clear existing alerts
+                
+                if (data.length === 0) {
+                    alertsContainer.innerHTML = '<p>No vaccination records found.</p>';
+                    return;
+                }
+                
+                data.forEach((record) => {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert';
+                    
+                    const vaccines = record.vaccines || [];
+                    const vaccineInfo = vaccines.map(v => 
+                        `${v.name} (${new Date(v.dateAdministered).toLocaleDateString()})`
+                    ).join(', ');
+                    
+                    alertDiv.innerHTML = `
+                        <p>Child: ${record.childName}</p>
+                        <span>Date of Birth: ${new Date(record.dateOfBirth).toLocaleDateString()}</span><br>
+                        <span>Vaccines: ${vaccineInfo || 'No vaccines recorded'}</span>
+                    `;
+                    alertsContainer.appendChild(alertDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching alerts:', error);
+                const alertsContainer = document.getElementById('alerts-container');
+                alertsContainer.innerHTML = '<p>Error loading vaccination records. Please try again later.</p>';
+            }
+        }
+        
+        // Call fetchAlerts when the page loads
+        document.addEventListener('DOMContentLoaded', fetchAlerts);
+    </script>
 </body>
 </html>

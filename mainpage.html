@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Child Vaccination Management System</title>
+    <title>VacciTrack - Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="mainpage.css">
 </head>
@@ -28,30 +28,7 @@
                         Children
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="schedule.html" class="nav-link">
-                        <i class="fas fa-calendar-alt"></i>
-                        Schedule
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="reminder.html" class="nav-link">
-                        <i class="fas fa-bell"></i>
-                        Reminders
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-chart-bar"></i>
-                        Reports
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-cog"></i>
-                        Settings
-                    </a>
-                </li>
+               
             </ul>
         </div>
         
@@ -67,9 +44,8 @@
 
             <div class="header">
                 <h1 class="page-title">Dashboard</h1>
-                <button class="add-btn" onclick="openModal()">
-                    <i class="fas fa-plus"></i>
-                    Add New Child
+                <button class="add-record-btn" onclick="showAddModal()">
+                    <i class="fas fa-plus"></i> Add New Record
                 </button>
             </div>
 
@@ -77,19 +53,11 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <h3>Total Children</h3>
-                    <div class="number">156</div>
+                    <div class="number" id="totalChildren">0</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Due This Week</h3>
-                    <div class="number">23</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Completed Today</h3>
-                    <div class="number">12</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Pending Reminders</h3>
-                    <div class="number">45</div>
+                    <h3>Total Vaccinations</h3>
+                    <div class="number" id="totalVaccinations">0</div>
                 </div>
             </div>
 
@@ -99,113 +67,335 @@
                     <thead>
                         <tr>
                             <th>Child Name</th>
-                            <th>Age</th>
-                            <th>Parent Name</th>
-                            <th>Next Vaccination</th>
+                            <th>Date of Birth</th>
+                            <th>Vaccines</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>John Doe</td>
-                            <td>2 years</td>
-                            <td>Jane Doe</td>
-                            <td>MMR - 28 Oct 2024</td>
-                            <td><span class="status upcoming">Upcoming</span></td>
-                            <td>
-                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Sarah Smith</td>
-                            <td>1 year</td>
-                            <td>Mike Smith</td>
-                            <td>DPT - 30 Oct 2024</td>
-                            <td><span class="status completed">Completed</span></td>
-                            <td>
-                                <button class="action-btn edit-btn"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
+                    <tbody id="childrenTableBody">
+                        <!-- Data will be populated dynamically -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Add/Edit Child Modal -->
-    <div class="modal" id="childModal">
+    <!-- Add Record Modal -->
+    <div id="addModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2>Add New Child</h2>
-            <form id="childForm">
+            <span class="close" onclick="hideAddModal()">&times;</span>
+            <h2>Add New Vaccination Record</h2>
+            <form id="addForm" onsubmit="addVaccinationRecord(event)">
                 <div class="form-group">
-                    <label for="childName">Child's Name</label>
-                    <input type="text" id="childName" class="form-control" required>
+                    <label for="childName">Child Name:</label>
+                    <input type="text" id="childName" name="childName" required>
                 </div>
+                
                 <div class="form-group">
-                    <label for="dateOfBirth">Date of Birth</label>
-                    <input type="date" id="dateOfBirth" class="form-control" required>
+                    <label for="dateOfBirth">Date of Birth:</label>
+                    <input type="date" id="dateOfBirth" name="dateOfBirth" required>
                 </div>
+                
                 <div class="form-group">
-                    <label for="parentName">Parent's Name</label>
-                    <input type="text" id="parentName" class="form-control" required>
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
+                
                 <div class="form-group">
-                    <label for="parentEmail">Parent's Email</label>
-                    <input type="email" id="parentEmail" class="form-control" required>
+                    <label>Vaccines:</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="vaccines" value="BCG"> BCG</label>
+                        <label><input type="checkbox" name="vaccines" value="HepB"> Hepatitis B</label>
+                        <label><input type="checkbox" name="vaccines" value="DPT"> DPT</label>
+                        <label><input type="checkbox" name="vaccines" value="OPV"> OPV</label>
+                        <label><input type="checkbox" name="vaccines" value="MMR"> MMR</label>
+                        <label><input type="checkbox" name="vaccines" value="Varicella"> Varicella</label>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <label for="parentPhone">Parent's Phone</label>
-                    <input type="tel" id="parentPhone" class="form-control" required>
+                    <label for="parentEmail">Parent Email:</label>
+                    <input type="email" id="parentEmail" name="parentEmail" required>
                 </div>
+                
                 <div class="form-group">
-                    <label for="address">Address</label>
-                    <textarea id="address" class="form-control" rows="3"></textarea>
+                    <button type="submit" class="btn-primary">Add Record</button>
+                    <button type="button" class="btn-secondary" onclick="hideAddModal()">Cancel</button>
                 </div>
-                <button type="submit" class="submit-btn">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Record Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideEditModal()">&times;</span>
+            <h2>Edit Vaccination Record</h2>
+            <form id="editForm" onsubmit="updateVaccinationRecord(event)">
+                <div class="form-group">
+                    <label for="editChildName">Child Name:</label>
+                    <input type="text" id="editChildName" name="childName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editDateOfBirth">Date of Birth:</label>
+                    <input type="date" id="editDateOfBirth" name="dateOfBirth" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editGender">Gender:</label>
+                    <select id="editGender" name="gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Vaccines:</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="editVaccines" value="BCG"> BCG</label>
+                        <label><input type="checkbox" name="editVaccines" value="HepB"> Hepatitis B</label>
+                        <label><input type="checkbox" name="editVaccines" value="DPT"> DPT</label>
+                        <label><input type="checkbox" name="editVaccines" value="OPV"> OPV</label>
+                        <label><input type="checkbox" name="editVaccines" value="MMR"> MMR</label>
+                        <label><input type="checkbox" name="editVaccines" value="Varicella"> Varicella</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editParentEmail">Parent Email:</label>
+                    <input type="email" id="editParentEmail" name="parentEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn-primary">Update Record</button>
+                    <button type="button" class="btn-secondary" onclick="hideEditModal()">Cancel</button>
+                </div>
             </form>
         </div>
     </div>
 
     <script>
-        // Modal Functions
-        const modal = document.getElementById('childModal');
+       // Global variables
+let currentRecordId = null;
 
-        function openModal() {
-            modal.style.display = 'block';
+// Modal functions
+function showAddModal() {
+    document.getElementById('addModal').style.display = 'block';
+}
+
+function hideAddModal() {
+    document.getElementById('addModal').style.display = 'none';
+    document.getElementById('addForm').reset();
+}
+
+function showEditModal() {
+    document.getElementById('editModal').style.display = 'block';
+}
+
+function hideEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+    document.getElementById('editForm').reset();
+}
+
+// Load dashboard data
+async function loadDashboardData() {
+    try {
+        const tableBody = document.getElementById('childrenTableBody');
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">Loading data...</td></tr>';
+
+        const response = await fetch('http://localhost:3000/api/dashboard-data');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Update statistics
+        document.getElementById('totalChildren').textContent = data.totalChildren;
+        document.getElementById('totalVaccinations').textContent = data.totalVaccinations;
+        
+        // Update table
+        tableBody.innerHTML = '';
+        
+        if (data.children.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No vaccination records found.</td></tr>';
+            return;
         }
 
-        function closeModal() {
-            modal.style.display = 'none';
-        }
+        data.children.forEach(child => {
+            const row = createTableRow(child);
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        const tableBody = document.getElementById('childrenTableBody');
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-red-600">Error loading data: ${error.message}</td></tr>`;
+    }
+}
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
+// Create table row
+function createTableRow(child) {
+    const row = document.createElement('tr');
+    
+    const dob = new Date(child.dateOfBirth).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+    
+    const statusClass = child.status === 'Completed' ? 'completed' : 'pending';
+    
+    row.innerHTML = `
+        <td>${child.childName}</td>
+        <td>${dob}</td>
+        <td>${child.vaccines.join(', ')}</td>
+        <td><span class="status ${statusClass}">${child.status}</span></td>
+        <td>
+            <button onclick="editVaccinationRecord('${child._id}')" class="edit-btn">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+            <button onclick="deleteVaccinationRecord('${child._id}')" class="delete-btn">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </td>
+    `;
+    
+    return row;
+}
 
-        // Form submission
-        document.getElementById('childForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Add your form submission logic here
-            closeModal();
+// Add new vaccination record
+async function addVaccinationRecord(event) {
+    event.preventDefault();
+    
+    try {
+        const formData = new FormData(event.target);
+        const vaccines = Array.from(formData.getAll('vaccines'));
+        
+        const data = {
+            childName: formData.get('childName'),
+            dateOfBirth: formData.get('dateOfBirth'),
+            gender: formData.get('gender'),
+            vaccines: vaccines,
+            parentEmail: formData.get('parentEmail')
+        };
+        
+        const response = await fetch('http://localhost:3000/api/vaccination', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         });
 
-        // Sign Out Function
-        function signOut() {
-            // Add sign-out logic here
-            // This might include:
-            // 1. Clearing session/local storage
-            // 2. Redirecting to login page
-            // For now, it's a placeholder
-            alert('Signing out...');
-            window.location.href = 'login.html'; // Redirect to login page
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        await loadDashboardData();
+        hideAddModal();
+        alert('Record added successfully');
+    } catch (error) {
+        console.error('Error adding record:', error);
+        alert('Failed to add record: ' + error.message);
+    }
+}
+
+async function editVaccinationRecord(id) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/vaccination/${id}`);
+        if (response.status === 404) {
+            throw new Error('Record not found');
+        }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const { data } = await response.json();
+        // ... rest of your edit function code ...
+    } catch (error) {
+        console.error('Error loading record for edit:', error);
+        alert('Failed to load record: ' + error.message);
+    }
+}
+
+// Update vaccination record
+async function updateVaccinationRecord(event) {
+    event.preventDefault();
+    
+    try {
+        const formData = new FormData(event.target);
+        const vaccines = Array.from(formData.getAll('editVaccines'));
+        
+        const data = {
+            childName: formData.get('childName'),
+            dateOfBirth: formData.get('dateOfBirth'),
+            gender: formData.get('gender'),
+            vaccines: vaccines,
+            parentEmail: formData.get('parentEmail')
+        };
+        
+        const response = await fetch(`http://localhost:3000/api/vaccination/${currentRecordId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        await loadDashboardData();
+        hideEditModal();
+        alert('Record updated successfully');
+    } catch (error) {
+        console.error('Error updating record:', error);
+        alert('Failed to update record: ' + error.message);
+    }
+}
+
+// Delete vaccination record
+async function deleteVaccinationRecord(id) {
+    if (!confirm('Are you sure you want to delete this record?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`http://localhost:3000/api/vaccination/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        await loadDashboardData();
+        alert('Record deleted successfully');
+    } catch (error) {
+        console.error('Error deleting record:', error);
+        alert('Failed to delete record: ' + error.message);
+    }
+}
+
+// Sign out function
+function signOut() {
+    // Add your sign out logic here
+    alert('Sign out functionality to be implemented');
+}
+
+// Load data when page loads
+document.addEventListener('DOMContentLoaded', loadDashboardData);
+
+// Auto-refresh data every 5 minutes
+setInterval(loadDashboardData, 300000);
     </script>
 </body>
 </html>

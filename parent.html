@@ -72,67 +72,63 @@
             <h1>FAQs</h1>
             <div id="faqContainer"></div>
         </div>
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            // Connect to Socket.IO server
-            const socket = io();
-    
-            // Listen for connection
-            socket.on('connect', () => {
-                console.log('Connected to server');
-                // Request FAQs immediately after connection
-                socket.emit('fetchFAQs');
-            });
-    
-            // Listen for FAQ data
-            socket.on('faqsData', (faqs) => {
-                console.log('Received FAQs:', faqs);
-                displayFAQs(faqs);
-            });
-    
-            // Display FAQs in the container
-            function displayFAQs(faqs) {
-                const container = document.getElementById('faqContainer');
-                container.innerHTML = ''; // Clear existing content
-    
-                faqs.forEach(faq => {
-                    const faqDiv = document.createElement('div');
-                    faqDiv.className = 'faq-item';
-                    
-                    faqDiv.innerHTML = `
-                        <div class="faq-question">${faq.question}</div>
-                        <div class="faq-answer">${faq.answer}</div>
-                    `;
-    
-                    // Add click event to toggle answer
-                    faqDiv.querySelector('.faq-question').addEventListener('click', function() {
-                        const parent = this.parentElement;
-                        // Toggle active class
-                        if (parent.classList.contains('active')) {
-                            parent.classList.remove('active');
-                        } else {
-                            // Close other open FAQs
-                            document.querySelectorAll('.faq-item.active').forEach(item => {
-                                item.classList.remove('active');
-                            });
-                            parent.classList.add('active');
-                        }
-                    });
-    
-                    container.appendChild(faqDiv);
-                });
-            }
-    
-            // Error handling for socket connection
-            socket.on('connect_error', (error) => {
-                console.error('Connection error:', error);
-                document.getElementById('faqContainer').innerHTML = 
-                    '<p style="color: red;">Error connecting to server. Please try again later.</p>';
-            });
-        </script>
-    <script src="parent.js">
-    
 
-    </script>
+        <script>
+          
+            // Function to fetch FAQs from the backend
+             // Function to fetch FAQs from your server
+    async function fetchFAQs() {
+        try {
+            const response = await fetch('/api/faqs');
+            if (!response.ok) {
+                throw new Error('Failed to fetch FAQs');
+            }
+            const faqs = await response.json();
+            displayFAQs(faqs);
+        } catch (error) {
+            console.error('Error fetching FAQs:', error);
+            document.getElementById('faqContainer').innerHTML = `
+                <div style="color: red; padding: 10px; text-align: center;">
+                    Error loading FAQs. <button onclick="fetchFAQs()">Try Again</button>
+                </div>`;
+        }
+    }
+
+    // Function to display FAQs
+    function displayFAQs(faqs) {
+        const container = document.getElementById('faqContainer');
+        container.innerHTML = '';
+
+        faqs.forEach(faq => {
+            const faqDiv = document.createElement('div');
+            faqDiv.className = 'faq-item';
+            
+            faqDiv.innerHTML = `
+                <div class="faq-question">${faq.question}</div>
+                <div class="faq-answer">${faq.answer}</div>
+            `;
+
+            faqDiv.querySelector('.faq-question').addEventListener('click', function() {
+                const parent = this.parentElement;
+                
+                // Close other open FAQs
+                document.querySelectorAll('.faq-item.active').forEach(item => {
+                    if (item !== parent) {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current FAQ
+                parent.classList.toggle('active');
+            });
+
+            container.appendChild(faqDiv);
+        });
+    }
+    
+    // Load FAQs when page loads
+    document.addEventListener('DOMContentLoaded', fetchFAQs)
+        </script>
+    </div>
 </body>
 </html>
