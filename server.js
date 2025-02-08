@@ -344,45 +344,78 @@ app.get('/api/vaccination/:id', async (req, res) => {
   }
 });
 
-// Create a new vaccination record
-app.post('/api/vaccination', async (req, res) => {
-  try {
-      const { childName, dateOfBirth, gender, vaccines, parentEmail } = req.body;
-      
-      // Format vaccines array to match schema
-      const formattedVaccines = vaccines.map(name => ({
-          name,
-          dateAdministered: new Date()
-      }));
+// Add these routes to your server.js
 
-      const newRecord = new ChildVaccination({
-          childName,
-          dateOfBirth,
-          gender,
-          vaccines: formattedVaccines,
-          parentEmail
-      });
+// Route to handle new vaccination registration
+app.post('/register-vaccination', async (req, res) => {
+    try {
+        const { childName, dateOfBirth, gender, vaccines, parentEmail } = req.body;
+        
+        // Format vaccines array to match schema
+        const formattedVaccines = vaccines.map(name => ({
+            name,
+            dateAdministered: new Date()
+        }));
 
-      const savedRecord = await newRecord.save();
-      
-      // Notify observers (if using the observer pattern)
-      vaccinationManager.notify({
-          type: 'NEW_RECORD',
-          data: savedRecord
-      });
+        const newVaccination = new ChildVaccination({
+            childName,
+            dateOfBirth,
+            gender,
+            vaccines: formattedVaccines,
+            parentEmail
+        });
 
-      res.status(201).json({
-          success: true,
-          data: savedRecord
-      });
-  } catch (error) {
-      console.error('Error creating vaccination record:', error);
-      res.status(500).json({
-          success: false,
-          error: 'Error creating vaccination record',
-          details: error.message
-      });
-  }
+        const savedVaccination = await newVaccination.save();
+        
+        // Notify observers
+        vaccinationManager.notify({
+            type: 'NEW_RECORD',
+            data: savedVaccination
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Vaccination record created successfully',
+            data: savedVaccination
+        });
+    } catch (error) {
+        console.error('Error creating vaccination record:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error creating vaccination record',
+            details: error.message
+        });
+    }
+});
+
+// Route to fetch vaccination records by parent email
+app.get('', async (req, res) => {
+    try {
+        const { parentEmail } = req.params;
+        
+        const records = await ChildVaccination.find({ parentEmail })
+            .sort({ createdAt: -1 }) // Sort by newest first
+            .exec();
+
+        res.json(records);
+    } catch (error) {
+        console.error('Error fetching vaccination records:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching vaccination records',
+            details: error.message
+        });
+    }
+});
+
+// Update existing routes to include proper error handling
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        error: 'Server error',
+        details: err.message
+    });
 });
 
 // Update a vaccination record
